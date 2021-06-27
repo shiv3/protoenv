@@ -7,6 +7,7 @@ import (
 
 type Protoc struct {
 	install  Install
+	local    Local
 	global   Global
 	version  Version
 	versions Versions
@@ -21,6 +22,7 @@ func NewProtoc(parentCmd *cobra.Command, cfg config.ProtocConfig) *Protoc {
 	parentCmd.AddCommand(cmd)
 	return &Protoc{
 		install:  NewInstall(cmd, cfg.InstallPath),
+		local:    NewLocal(cmd, cfg.InstallPath),
 		global:   NewGlobal(cmd, cfg.InstallPath),
 		version:  NewVersion(cmd, cfg.InstallPath),
 		versions: NewVersions(cmd, cfg.InstallPath),

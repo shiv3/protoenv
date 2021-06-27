@@ -16,6 +16,7 @@ import (
 
 var (
 	ShowVersionFormatSimple = "%s\n"
+	TargetBinaryFileName    = "protoc"
 )
 
 type Install struct {
@@ -80,12 +81,12 @@ func (c Install) installVersion(ctx context.Context, version string) error {
 	if err != nil {
 		return err
 	}
-	filePath, err := installer.GetTargetFile(url, "protoc", targetDirPath)
+	filePath, err := installer.GetTargetFile(url, TargetBinaryFileName, targetDirPath)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("installed protoc %s\n", filePath)
-	if err := setGlobalVersion(getGlobalVersionFilePath(c.InstallDirectoryPath), version); err != nil {
+	fmt.Printf("installed %s %s\n", TargetBinaryFileName, filePath)
+	if err := setVersion(getVersionsPath(c.InstallDirectoryPath), getGlobalVersionFilePath(c.InstallDirectoryPath), version); err != nil {
 		return err
 	}
 	return nil
