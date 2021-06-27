@@ -4,9 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/shiv3/protoenv/adapter/installer"
+	"os"
+	"path/filepath"
 	"runtime"
 
-	"github.com/shiv3/protoc/adapter/github"
+	"github.com/shiv3/protoenv/adapter/github"
 
 	"github.com/spf13/cobra"
 )
@@ -16,40 +19,29 @@ var (
 )
 
 type Install struct {
-	command *cobra.Command
+	InstallDirectoryPath string
 }
 
-type InstallOptions struct {
-	ShowVersionList bool
-}
-
-func NewInstall(options InstallOptions) *Install {
-	cmd := newInstallCmd(options)
-	return &Install{
-		command: &cobra.Command{
-			Use:   "install",
-			Short: "install specified version:",
-			Long:  `install specified version:`,
-			RunE:  cmd.run,
-		},
+func NewInstall(parentCmd *cobra.Command, installDirectoryPath string) Install {
+	install := Install{
+		InstallDirectoryPath: installDirectoryPath,
 	}
+	cmd := &cobra.Command{
+		Use:   "install (version)",
+		Short: "install specified version",
+		Long:  `install specified version`,
+		RunE:  install.RunE,
+	}
+	cmd.PersistentFlags().BoolP("list", "l", false, "show install list flag")
+	parentCmd.AddCommand(cmd)
+	return install
 }
 
-func (i Install) GetCommand() *cobra.Command {
-	return i.command
-}
-
-type installCmd struct {
-	installOptions InstallOptions
-}
-
-func newInstallCmd(installOptions InstallOptions) installCmd {
-	return installCmd{installOptions: installOptions}
-}
-
-func (c *installCmd) run(cmd *cobra.Command, args []string) error {
+func (c Install) RunE(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
-	if c.installOptions.ShowVersionList {
+
+	//c.installOptions.ShowVersionList {
+	if list, err := cmd.PersistentFlags().GetBool("list"); err == nil && list {
 		if err := c.showVersion(ctx); err != nil {
 			return err
 		}
@@ -67,7 +59,7 @@ func (c *installCmd) run(cmd *cobra.Command, args []string) error {
 	return errors.New("requires a installing version or some flags")
 }
 
-func (c *installCmd) showVersion(ctx context.Context) error {
+func (c Install) showVersion(ctx context.Context) error {
 	versions, err := github.GetProtobufVersions(ctx)
 	if err != nil {
 		return err
@@ -78,11 +70,23 @@ func (c *installCmd) showVersion(ctx context.Context) error {
 	return nil
 }
 
-func (c *installCmd) installVersion(ctx context.Context, version string) error {
-	url, err := github.GetProtobufGetReleaseAssetURL(ctx, version, runtime.GOARCH)
+func (c Install) installVersion(ctx context.Context, version string) error {
+	url, err := github.GetProtobufGetReleaseAssetURL(ctx, version, runtime.GOOS, runtime.GOARCH)
 	if err != nil {
 		return err
 	}
-
+	targetDirPath := filepath.Join(c.InstallDirectoryPath, "versions", version)
+	err = os.MkdirAll(targetDirPath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	filePath, err := installer.GetTargetFile(url, "protoc", targetDirPath)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("installed protoc %s\n", filePath)
+	if err := setGlobalVersion(getGlobalVersionFilePath(c.InstallDirectoryPath), version); err != nil {
+		return err
+	}
 	return nil
 }
