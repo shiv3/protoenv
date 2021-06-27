@@ -21,13 +21,17 @@ func GetTargetFile(url, targetFile, targetDir string) (string, error) {
 	if fs.ValidPath(targetDir) {
 		return "", fmt.Errorf("")
 	}
-	filePath := fmt.Sprintf("%s/%s", targetDir, targetFile)
+	filePath := filepath.Join(targetDir, targetFile)
 	file, err := os.Create(filePath)
 	if err != nil {
 		return "", err
 	}
 	defer file.Close()
 	_, err = io.Copy(file, zipReader)
+	if err != nil {
+		return "", err
+	}
+	err = os.Chmod(filePath, os.ModePerm)
 	if err != nil {
 		return "", err
 	}

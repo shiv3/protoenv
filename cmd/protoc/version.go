@@ -66,3 +66,7 @@ func setVersion(versionsPath, versionFilePath string, version string) error {
 	fmt.Printf("set global version: %s\n", version)
 	return nil
 }
+
+func GetShimsFileDir(installFilePath string) string {
+	return filepath.Join(installFilePath, "shims")
+}

@@ -6,6 +6,7 @@ import (
 )
 
 type Protoc struct {
+	init     Init
 	install  Install
 	local    Local
 	global   Global
@@ -21,6 +22,7 @@ func NewProtoc(parentCmd *cobra.Command, cfg config.ProtocConfig) *Protoc {
 	}
 	parentCmd.AddCommand(cmd)
 	return &Protoc{
+		init:     NewInit(cmd, cfg.InstallPath),
 		install:  NewInstall(cmd, cfg.InstallPath),
 		local:    NewLocal(cmd, cfg.InstallPath),
 		global:   NewGlobal(cmd, cfg.InstallPath),
