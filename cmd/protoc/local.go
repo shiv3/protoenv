@@ -16,8 +16,8 @@ func NewLocal(parentCmd *cobra.Command, installDirectoryPath string) Local {
 	}
 	cmd := &cobra.Command{
 		Use:   "local",
-		Short: "Set or show the local Go version",
-		Long:  `Set or show the local Go version`,
+		Short: fmt.Sprintf("Set or show the local %s version",TargetBinaryFileName),
+		Long:  fmt.Sprintf(`Set or show the local %s version`,TargetBinaryFileName),
 		RunE:  local.RunE,
 	}
 	parentCmd.AddCommand(cmd)

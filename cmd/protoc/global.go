@@ -17,8 +17,8 @@ func NewGlobal(parentCmd *cobra.Command, installDirectoryPath string) Global {
 	}
 	cmd := &cobra.Command{
 		Use:   "global",
-		Short: "Set or show the global Go version",
-		Long:  `Set or show the global Go version`,
+		Short: fmt.Sprintf("Set or show the global %s version",TargetBinaryFileName),
+		Long:  fmt.Sprintf(`Set or show the global %s version`,TargetBinaryFileName),
 		RunE:  global.RunE,
 	}
 	parentCmd.AddCommand(cmd)

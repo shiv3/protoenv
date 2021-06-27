@@ -3,6 +3,11 @@
 version manager for protocol buffer tools
 
 
+# Install
+
+```
+go install github.com/shiv3/protoenv
+```
 
 # Usage
 
@@ -15,10 +20,12 @@ Usage:
   protoenv protoc [command]
 
 Available Commands:
-  global      Set or show the global Go version
+  global      Set or show the global protoc version
+  init        Set or show the global Go version%!(EXTRA string=protoc)
   install     install specified version
+  local       Set or show the local protoc version
   version     Show the current protoc version and its origin
-  versions    List all Go versions available to protoenv
+  versions    List all protoc versions available to protoenv
 
 Flags:
   -h, --help   help for protoc

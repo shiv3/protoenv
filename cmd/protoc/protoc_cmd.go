@@ -3,6 +3,7 @@ package protoc
 import (
 	"github.com/shiv3/protoenv/config"
 	"github.com/spf13/cobra"
+	"fmt"
 )
 
 type Protoc struct {
@@ -17,8 +18,8 @@ type Protoc struct {
 func NewProtoc(parentCmd *cobra.Command, cfg config.ProtocConfig) *Protoc {
 	cmd := &cobra.Command{
 		Use:   "protoc",
-		Short: "protoc version manager",
-		Long:  `protoc version manager`,
+		Short: fmt.Sprintf("%s version manager",TargetBinaryFileName),
+		Long:  fmt.Sprintf(`%s version manager`,TargetBinaryFileName),
 	}
 	parentCmd.AddCommand(cmd)
 	return &Protoc{

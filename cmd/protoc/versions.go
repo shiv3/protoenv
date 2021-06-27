@@ -17,8 +17,8 @@ func NewVersions(parentCmd *cobra.Command, installDirectoryPath string) Versions
 	}
 	cmd := &cobra.Command{
 		Use:   "versions",
-		Short: "List all Go versions available to protoenv",
-		Long:  `List all Go versions available to protoenv`,
+		Short: fmt.Sprintf("List all %s versions available to protoenv",TargetBinaryFileName),
+		Long:  fmt.Sprintf(`List all %s versions available to protoenv`,TargetBinaryFileName),
 		RunE:  versions.RunE,
 	}
 	parentCmd.AddCommand(cmd)
