@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/shiv3/protoc/adapter/github"
+	"github.com/shiv3/protoenv/adapter/github"
 
 	"github.com/spf13/cobra"
 )
