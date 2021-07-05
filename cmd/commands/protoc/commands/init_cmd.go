@@ -1,4 +1,4 @@
-package protoc
+package commands
 
 import (
 	"fmt"
@@ -8,16 +8,18 @@ import (
 
 type Init struct {
 	InstallDirectoryPath string
+	TargetBinaryFileName string
 }
 
-func NewInit(parentCmd *cobra.Command, installDirectoryPath string) Init {
+func NewInit(parentCmd *cobra.Command, installDirectoryPath string, TargetBinaryFileName string) Init {
 	init := Init{
 		InstallDirectoryPath: installDirectoryPath,
+		TargetBinaryFileName: TargetBinaryFileName,
 	}
 	cmd := &cobra.Command{
 		Use:   "init",
-		Short: fmt.Sprintf("Set or show the global Go version",TargetBinaryFileName),
-		Long:  fmt.Sprintf(`Set or show the global Go version`,TargetBinaryFileName),
+		Short: fmt.Sprintf("Set or show the global Go version", TargetBinaryFileName),
+		Long:  fmt.Sprintf(`Set or show the global Go version`, TargetBinaryFileName),
 		RunE:  init.RunE,
 	}
 	parentCmd.AddCommand(cmd)

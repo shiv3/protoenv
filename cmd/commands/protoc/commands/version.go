@@ -1,4 +1,4 @@
-package protoc
+package commands
 
 import (
 	"fmt"
@@ -11,12 +11,16 @@ import (
 var versionFileName = ".protoc-version"
 
 type Version struct {
-	GlobalVersionFilePath string
+	GlobalVersionFilePath   string
+	ShowVersionFormatSimple string
+	TargetBinaryFileName    string
 }
 
-func NewVersion(parentCmd *cobra.Command, installDirectoryPath string) Version {
+func NewVersion(parentCmd *cobra.Command, installDirectoryPath string, ShowVersionFormatSimple string, TargetBinaryFileName string) Version {
 	version := Version{
-		GlobalVersionFilePath: getGlobalVersionFilePath(installDirectoryPath),
+		GlobalVersionFilePath:   getGlobalVersionFilePath(installDirectoryPath),
+		ShowVersionFormatSimple: ShowVersionFormatSimple,
+		TargetBinaryFileName:    TargetBinaryFileName,
 	}
 	cmd := &cobra.Command{
 		Use:   "version",
@@ -40,7 +44,7 @@ func (i *Version) RunE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf(ShowVersionFormatSimple, v)
+	fmt.Printf(i.ShowVersionFormatSimple, v)
 	return nil
 }
 

@@ -1,4 +1,4 @@
-package protoc
+package commands
 
 import (
 	"fmt"
@@ -7,17 +7,21 @@ import (
 )
 
 type Local struct {
-	InstallDirectoryPath string
+	InstallDirectoryPath    string
+	ShowVersionFormatSimple string
+	TargetBinaryFileName    string
 }
 
-func NewLocal(parentCmd *cobra.Command, installDirectoryPath string) Local {
+func NewLocal(parentCmd *cobra.Command, installDirectoryPath string, ShowVersionFormatSimple string, TargetBinaryFileName string) Local {
 	local := Local{
-		InstallDirectoryPath: installDirectoryPath,
+		InstallDirectoryPath:    installDirectoryPath,
+		ShowVersionFormatSimple: ShowVersionFormatSimple,
+		TargetBinaryFileName:    TargetBinaryFileName,
 	}
 	cmd := &cobra.Command{
 		Use:   "local",
-		Short: fmt.Sprintf("Set or show the local %s version",TargetBinaryFileName),
-		Long:  fmt.Sprintf(`Set or show the local %s version`,TargetBinaryFileName),
+		Short: fmt.Sprintf("Set or show the local %s version", TargetBinaryFileName),
+		Long:  fmt.Sprintf(`Set or show the local %s version`, TargetBinaryFileName),
 		RunE:  local.RunE,
 	}
 	parentCmd.AddCommand(cmd)
@@ -36,7 +40,7 @@ func (i *Local) RunE(cmd *cobra.Command, args []string) error {
 	if v, err := getVersion(localVersionFilePath); err != nil {
 		return err
 	} else {
-		fmt.Printf(ShowVersionFormatSimple, v)
+		fmt.Printf(i.ShowVersionFormatSimple, v)
 	}
 	return nil
 }

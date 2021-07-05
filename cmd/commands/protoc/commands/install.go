@@ -1,4 +1,4 @@
-package protoc
+package commands
 
 import (
 	"context"
@@ -14,18 +14,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	ShowVersionFormatSimple = "%s\n"
-	TargetBinaryFileName    = "protoc"
-)
-
 type Install struct {
-	InstallDirectoryPath string
+	InstallDirectoryPath    string
+	ShowVersionFormatSimple string
+	TargetBinaryFileName    string
 }
 
-func NewInstall(parentCmd *cobra.Command, installDirectoryPath string) Install {
+func NewInstall(parentCmd *cobra.Command, installDirectoryPath string, ShowVersionFormatSimple string, TargetBinaryFileName string) Install {
 	install := Install{
-		InstallDirectoryPath: installDirectoryPath,
+		InstallDirectoryPath:    installDirectoryPath,
+		ShowVersionFormatSimple: ShowVersionFormatSimple,
+		TargetBinaryFileName:    TargetBinaryFileName,
 	}
 	cmd := &cobra.Command{
 		Use:   "install (version)",
@@ -60,33 +59,33 @@ func (c Install) RunE(cmd *cobra.Command, args []string) error {
 	return errors.New("requires a installing version or some flags")
 }
 
-func (c Install) showVersion(ctx context.Context) error {
+func (i Install) showVersion(ctx context.Context) error {
 	versions, err := github.GetProtobufVersions(ctx)
 	if err != nil {
 		return err
 	}
 	for _, version := range versions {
-		fmt.Printf(ShowVersionFormatSimple, version)
+		fmt.Printf(i.ShowVersionFormatSimple, version)
 	}
 	return nil
 }
 
-func (c Install) installVersion(ctx context.Context, version string) error {
+func (i Install) installVersion(ctx context.Context, version string) error {
 	url, err := github.GetProtobufGetReleaseAssetURL(ctx, version, runtime.GOOS, runtime.GOARCH)
 	if err != nil {
 		return err
 	}
-	targetDirPath := filepath.Join(c.InstallDirectoryPath, "versions", version)
+	targetDirPath := filepath.Join(i.InstallDirectoryPath, "versions", version)
 	err = os.MkdirAll(targetDirPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	filePath, err := installer.GetTargetFile(url, TargetBinaryFileName, targetDirPath)
+	filePath, err := installer.GetTargetFile(url, i.TargetBinaryFileName, targetDirPath)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("installed %s %s\n", TargetBinaryFileName, filePath)
-	if err := setVersion(getVersionsPath(c.InstallDirectoryPath), getGlobalVersionFilePath(c.InstallDirectoryPath), version); err != nil {
+	fmt.Printf("installed %s %s\n", i.TargetBinaryFileName, filePath)
+	if err := setVersion(getVersionsPath(i.InstallDirectoryPath), getGlobalVersionFilePath(i.InstallDirectoryPath), version); err != nil {
 		return err
 	}
 	return nil

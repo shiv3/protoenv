@@ -1,4 +1,4 @@
-package protoc
+package commands
 
 import (
 	"fmt"
@@ -8,17 +8,21 @@ import (
 )
 
 type Global struct {
-	InstallDirectoryPath string
+	InstallDirectoryPath    string
+	ShowVersionFormatSimple string
+	TargetBinaryFileName    string
 }
 
-func NewGlobal(parentCmd *cobra.Command, installDirectoryPath string) Global {
+func NewGlobal(parentCmd *cobra.Command, installDirectoryPath string, ShowVersionFormatSimple string, TargetBinaryFileName string) Global {
 	global := Global{
-		InstallDirectoryPath: installDirectoryPath,
+		InstallDirectoryPath:    installDirectoryPath,
+		ShowVersionFormatSimple: ShowVersionFormatSimple,
+		TargetBinaryFileName:    TargetBinaryFileName,
 	}
 	cmd := &cobra.Command{
 		Use:   "global",
-		Short: fmt.Sprintf("Set or show the global %s version",TargetBinaryFileName),
-		Long:  fmt.Sprintf(`Set or show the global %s version`,TargetBinaryFileName),
+		Short: fmt.Sprintf("Set or show the global %s version", TargetBinaryFileName),
+		Long:  fmt.Sprintf(`Set or show the global %s version`, TargetBinaryFileName),
 		RunE:  global.RunE,
 	}
 	parentCmd.AddCommand(cmd)
@@ -31,13 +35,13 @@ func (i *Global) RunE(cmd *cobra.Command, args []string) error {
 		if err := setVersion(getVersionsPath(i.InstallDirectoryPath), getGlobalVersionFilePath(i.InstallDirectoryPath), version); err != nil {
 			return err
 		}
-		return setShims(GetShimsFileDir(i.InstallDirectoryPath), TargetBinaryFileName, i.InstallDirectoryPath, version)
+		return setShims(GetShimsFileDir(i.InstallDirectoryPath), i.TargetBinaryFileName, i.InstallDirectoryPath, version)
 	}
 	v, err := getVersion(getGlobalVersionFilePath(i.InstallDirectoryPath))
 	if err != nil {
 		return err
 	}
-	fmt.Printf(ShowVersionFormatSimple, v)
+	fmt.Printf(i.ShowVersionFormatSimple, v)
 	return nil
 }
 
