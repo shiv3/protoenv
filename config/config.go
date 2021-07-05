@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
+	"path"
 )
 
 var configFileName = "config.yaml"
@@ -55,7 +56,7 @@ func InitConfig() Config {
 		Debug:             false,
 		RootDirectoryPath: getDefaultConfigPath(),
 		Protoc: ProtocConfig{
-			InstallPath: fmt.Sprintf("%s/%s", getDefaultConfigPath(), "protoc"),
+			InstallPath: path.Join(getDefaultConfigPath(), "protoc"),
 		},
 	}
 }

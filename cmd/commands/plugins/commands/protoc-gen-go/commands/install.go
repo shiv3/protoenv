@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/shiv3/protoenv/adapter/github/protoc"
+	protoc_gen_go "github.com/shiv3/protoenv/adapter/github/protoc-gen-go"
 	"github.com/shiv3/protoenv/adapter/installer"
 	"os"
 	"path/filepath"
@@ -59,7 +59,7 @@ func (c Install) RunE(cmd *cobra.Command, args []string) error {
 }
 
 func (i Install) showVersion(ctx context.Context) error {
-	versions, err := protoc.GetProtobufVersions(ctx)
+	versions, err := protoc_gen_go.GetprotocGenGoRepoGoVersions(ctx)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (i Install) showVersion(ctx context.Context) error {
 }
 
 func (i Install) installVersion(ctx context.Context, version string) error {
-	url, err := protoc.GetProtobufGetReleaseAssetURL(ctx, version, runtime.GOOS, runtime.GOARCH)
+	url, err := protoc_gen_go.GetprotocGenGoRepoGoGetReleaseAssetURL(ctx, version, runtime.GOOS, runtime.GOARCH)
 	if err != nil {
 		return err
 	}
