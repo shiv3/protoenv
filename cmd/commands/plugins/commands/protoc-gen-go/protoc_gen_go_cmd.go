@@ -2,6 +2,7 @@ package protoc_gen_go
 
 import (
 	"fmt"
+
 	commands3 "github.com/shiv3/protoenv/cmd/commands/plugins/commands/protoc-gen-go/commands"
 	"github.com/spf13/cobra"
 )

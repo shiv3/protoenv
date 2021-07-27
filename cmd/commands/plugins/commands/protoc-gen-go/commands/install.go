@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"github.com/shiv3/protoenv/adapter/goinstall"
+
 	protoc_gen_go "github.com/shiv3/protoenv/adapter/github/protoc-gen-go"
-	"github.com/shiv3/protoenv/adapter/installer"
-	"os"
-	"path/filepath"
-	"runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -36,19 +35,19 @@ func NewInstall(parentCmd *cobra.Command, installDirectoryPath string, ShowVersi
 	return install
 }
 
-func (c Install) RunE(cmd *cobra.Command, args []string) error {
+func (i Install) RunE(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 
 	//c.installOptions.ShowVersionList {
 	if list, err := cmd.PersistentFlags().GetBool("list"); err == nil && list {
-		if err := c.showVersion(ctx); err != nil {
+		if err := i.showVersion(ctx); err != nil {
 			return err
 		}
 		return nil
 	}
 
 	if len(args) >= 1 {
-		err := c.installVersion(ctx, args[0])
+		err := i.installVersion(ctx, args[0])
 		if err != nil {
 			return err
 		}
@@ -70,21 +69,8 @@ func (i Install) showVersion(ctx context.Context) error {
 }
 
 func (i Install) installVersion(ctx context.Context, version string) error {
-	url, err := protoc_gen_go.GetprotocGenGoRepoGoGetReleaseAssetURL(ctx, version, runtime.GOOS, runtime.GOARCH)
+	_, err := goinstall.GoInstall(ctx, "google.golang.org/protobuf", version, i.InstallDirectoryPath)
 	if err != nil {
-		return err
-	}
-	targetDirPath := filepath.Join(i.InstallDirectoryPath, "versions", version)
-	err = os.MkdirAll(targetDirPath, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	filePath, err := installer.GetTargetFile(url, i.TargetBinaryFileName, targetDirPath)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("installed %s %s\n", i.TargetBinaryFileName, filePath)
-	if err := setVersion(getVersionsPath(i.InstallDirectoryPath), getGlobalVersionFilePath(i.InstallDirectoryPath), version); err != nil {
 		return err
 	}
 	return nil
