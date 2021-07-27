@@ -1,4 +1,4 @@
-package installer
+package archiver
 
 import (
 	"archive/zip"
@@ -12,7 +12,7 @@ import (
 )
 
 func GetTargetFile(url, targetFile, targetDir string) (string, error) {
-	zipReader, err := GetZipReader(url, targetFile)
+	zipReader, err := getZipReader(url, targetFile)
 	if err != nil {
 		return "", err
 	}
@@ -38,7 +38,7 @@ func GetTargetFile(url, targetFile, targetDir string) (string, error) {
 	return filePath, nil
 }
 
-func GetZipReader(url string, targetFile string) (io.ReadCloser, error) {
+func getZipReader(url string, targetFile string) (io.ReadCloser, error) {
 	if targetFile == "" {
 		return nil, fmt.Errorf("set target file name")
 	}

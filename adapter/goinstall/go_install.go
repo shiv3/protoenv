@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func GoInstall(ctx context.Context, target, tag, installPath string) (string, error) {
+func GoInstall(ctx context.Context, target, tag, installPath string) error {
 	cmdString := []string{
 		"go", "install", getInstallPath(target, tag),
 	}
@@ -27,7 +27,8 @@ func GoInstall(ctx context.Context, target, tag, installPath string) (string, er
 			fmt.Printf("error:\n%s", ee.Stderr)
 		}
 	}
-	return string(out), err
+	fmt.Printf("%s", out)
+	return err
 }
 
 // output install path

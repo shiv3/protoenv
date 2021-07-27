@@ -20,7 +20,6 @@ func TestGoInstall(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    string
 		wantErr bool
 	}{
 		{
@@ -31,19 +30,15 @@ func TestGoInstall(t *testing.T) {
 				tag:         "v0.0.0",
 				installPath: "./",
 			},
-			want:    "",
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GoInstall(tt.args.ctx, tt.args.target, tt.args.tag, tt.args.installPath)
+			err := GoInstall(tt.args.ctx, tt.args.target, tt.args.tag, tt.args.installPath)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GoInstall() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if got != tt.want {
-				t.Errorf("GoInstall() got = %v, want %v", got, tt.want)
 			}
 			abs, _ := filepath.Abs("protoenv")
 			if _, err := os.Stat(abs); err != nil {

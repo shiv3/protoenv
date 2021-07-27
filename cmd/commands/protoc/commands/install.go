@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/shiv3/protoenv/adapter/github/protoc"
-	"github.com/shiv3/protoenv/adapter/installer"
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/shiv3/protoenv/adapter/archiver"
+	"github.com/shiv3/protoenv/adapter/github/protoc"
 
 	"github.com/spf13/cobra"
 )
@@ -79,7 +80,7 @@ func (i Install) installVersion(ctx context.Context, version string) error {
 	if err != nil {
 		return err
 	}
-	filePath, err := installer.GetTargetFile(url, i.TargetBinaryFileName, targetDirPath)
+	filePath, err := archiver.GetTargetFile(url, i.TargetBinaryFileName, targetDirPath)
 	if err != nil {
 		return err
 	}
