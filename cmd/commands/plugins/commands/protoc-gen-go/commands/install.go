@@ -23,9 +23,9 @@ func NewInstall(parentCmd *cobra.Command, installDirectoryPath string, ShowVersi
 	install := Install{
 		InstallDirectoryPath:    installDirectoryPath,
 		ShowVersionFormatSimple: ShowVersionFormatSimple,
-		TargetUrl:               "google.golang.org/protobuf",
+		TargetUrl:               "google.golang.org/protobuf/cmd/protoc-gen-go",
 		installer: installer.NewInstaller(installer.InstallTypeGoInstall, installer.InstallConfig{
-			TargetUrl:        "google.golang.org/protobuf",
+			TargetUrl:        "google.golang.org/protobuf/cmd/protoc-gen-go",
 			TargetVersion:    "",
 			TargetPath:       installDirectoryPath,
 			TargetBinaryName: TargetBinaryFileName,
