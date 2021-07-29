@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/shiv3/protoenv/adapter/goinstall"
+	"github.com/shiv3/protoenv/adapter/gomodule"
 
-	protoc_gen_go "github.com/shiv3/protoenv/adapter/github/protoc-gen-go"
+	"github.com/shiv3/protoenv/domain/installer"
 
 	"github.com/spf13/cobra"
 )
@@ -15,14 +15,21 @@ import (
 type Install struct {
 	InstallDirectoryPath    string
 	ShowVersionFormatSimple string
-	TargetBinaryFileName    string
+	TargetUrl               string
+	installer               installer.Installer
 }
 
 func NewInstall(parentCmd *cobra.Command, installDirectoryPath string, ShowVersionFormatSimple string, TargetBinaryFileName string) Install {
 	install := Install{
 		InstallDirectoryPath:    installDirectoryPath,
 		ShowVersionFormatSimple: ShowVersionFormatSimple,
-		TargetBinaryFileName:    TargetBinaryFileName,
+		TargetUrl:               "google.golang.org/protobuf",
+		installer: installer.NewInstaller(installer.InstallTypeGoInstall, installer.InstallConfig{
+			TargetUrl:        "google.golang.org/protobuf",
+			TargetVersion:    "",
+			TargetPath:       installDirectoryPath,
+			TargetBinaryName: TargetBinaryFileName,
+		}),
 	}
 	cmd := &cobra.Command{
 		Use:   "install (version)",
@@ -58,7 +65,7 @@ func (i Install) RunE(cmd *cobra.Command, args []string) error {
 }
 
 func (i Install) showVersion(ctx context.Context) error {
-	versions, err := protoc_gen_go.GetprotocGenGoRepoGoVersions(ctx)
+	versions, err := gomodule.GoGetVersions(ctx, i.TargetUrl)
 	if err != nil {
 		return err
 	}
@@ -69,9 +76,6 @@ func (i Install) showVersion(ctx context.Context) error {
 }
 
 func (i Install) installVersion(ctx context.Context, version string) error {
-	_, err := goinstall.GoInstall(ctx, "google.golang.org/protobuf", version, i.InstallDirectoryPath)
-	if err != nil {
-		return err
-	}
-	return nil
+	i.installer.SetVersion(version)
+	return i.installer.Install(ctx)
 }

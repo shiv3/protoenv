@@ -22,7 +22,7 @@ func NewInstallerGithubReleaseZip(installType InstallType, installConfig Install
 	return &InstallerGithubReleaseZip{InstallType: installType, InstallConfig: installConfig}
 }
 
-func (i *InstallerGithubReleaseZip) Install(ctx context.Context) error {
+func (i *InstallerGithubReleaseZip) Install(ctx context.Context, options ...InstallOption) error {
 	url, err := getReleaseAssetURL(ctx, i.InstallConfig.TargetUrl, i.InstallConfig.TargetVersion, i.ArchMatcher)
 	if err != nil {
 		return err
@@ -55,4 +55,8 @@ func archMarch(os, arch string, matcher map[string]string) string {
 		return v
 	}
 	return ""
+}
+
+func (i *InstallerGithubReleaseZip) SetVersion(version string) {
+	i.InstallConfig.TargetVersion = version
 }

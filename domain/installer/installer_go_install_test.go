@@ -23,8 +23,7 @@ func TestInstallerGoInstall_Install(t *testing.T) {
 		InstallConfig InstallConfig
 	}
 	type args struct {
-		ctx    context.Context
-		option []InstallOption
+		ctx context.Context
 	}
 	tests := []struct {
 		name    string
@@ -44,8 +43,7 @@ func TestInstallerGoInstall_Install(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx:    nil,
-				option: nil,
+				ctx: nil,
 			},
 			wantErr: false,
 		},

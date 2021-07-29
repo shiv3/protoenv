@@ -11,18 +11,21 @@ const (
 	InstallTypeGitHubReleaseZip InstallType = "github_release_zip"
 )
 
-func NewInstallers(installConfig InstallConfig) map[InstallType]Installer {
-	return map[InstallType]Installer{
-		InstallTypeGoInstall:        NewInstallerGoInstall(InstallTypeGoInstall, installConfig),
-		InstallTypeGitHubReleaseZip: NewInstallerGithubReleaseZip(InstallTypeGitHubReleaseZip, installConfig),
+func NewInstaller(installType InstallType, installConfig InstallConfig) Installer {
+	switch installType {
+	case InstallTypeGoInstall:
+		return NewInstallerGoInstall(InstallTypeGoInstall, installConfig)
+	case InstallTypeGitHubReleaseZip:
+		return NewInstallerGithubReleaseZip(InstallTypeGitHubReleaseZip, installConfig)
 	}
-}
-
-type InstallOption interface {
+	return nil
 }
 
 type Installer interface {
-	Install(ctx context.Context) error
+	Install(ctx context.Context, options ...InstallOption) error
+	SetVersion(version string)
+}
+type InstallOption struct {
 }
 
 type InstallConfig struct {

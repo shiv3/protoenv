@@ -24,8 +24,7 @@ func TestInstallerGithubReleaseZip_Install(t *testing.T) {
 		InstallConfig InstallConfig
 	}
 	type args struct {
-		ctx    context.Context
-		option []InstallOption
+		ctx context.Context
 	}
 	tests := []struct {
 		name    string

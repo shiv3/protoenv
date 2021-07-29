@@ -1,4 +1,4 @@
-package goinstall
+package gomodule
 
 import (
 	"context"

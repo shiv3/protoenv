@@ -4,12 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
-	"runtime"
 
-	"github.com/shiv3/protoenv/adapter/archiver"
-	"github.com/shiv3/protoenv/adapter/github/protoc"
+	"github.com/shiv3/protoenv/adapter/github"
+
+	"github.com/shiv3/protoenv/domain/installer"
 
 	"github.com/spf13/cobra"
 )
@@ -17,14 +15,21 @@ import (
 type Install struct {
 	InstallDirectoryPath    string
 	ShowVersionFormatSimple string
-	TargetBinaryFileName    string
+	TargetUrl               string
+	installer               installer.Installer
 }
 
 func NewInstall(parentCmd *cobra.Command, installDirectoryPath string, ShowVersionFormatSimple string, TargetBinaryFileName string) Install {
 	install := Install{
 		InstallDirectoryPath:    installDirectoryPath,
 		ShowVersionFormatSimple: ShowVersionFormatSimple,
-		TargetBinaryFileName:    TargetBinaryFileName,
+		TargetUrl:               "github.com/protocolbuffers/protobuf",
+		installer: installer.NewInstaller(installer.InstallTypeGitHubReleaseZip, installer.InstallConfig{
+			TargetUrl:        "github.com/protocolbuffers/protobuf",
+			TargetVersion:    "",
+			TargetPath:       installDirectoryPath,
+			TargetBinaryName: TargetBinaryFileName,
+		}),
 	}
 	cmd := &cobra.Command{
 		Use:   "install (version)",
@@ -60,7 +65,7 @@ func (c Install) RunE(cmd *cobra.Command, args []string) error {
 }
 
 func (i Install) showVersion(ctx context.Context) error {
-	versions, err := protoc.GetProtobufVersions(ctx)
+	versions, err := github.GetReleaseVersions(ctx, i.TargetUrl)
 	if err != nil {
 		return err
 	}
@@ -71,22 +76,6 @@ func (i Install) showVersion(ctx context.Context) error {
 }
 
 func (i Install) installVersion(ctx context.Context, version string) error {
-	url, err := protoc.GetProtobufGetReleaseAssetURL(ctx, version, runtime.GOOS, runtime.GOARCH)
-	if err != nil {
-		return err
-	}
-	targetDirPath := filepath.Join(i.InstallDirectoryPath, "versions", version)
-	err = os.MkdirAll(targetDirPath, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	filePath, err := archiver.GetTargetFile(url, i.TargetBinaryFileName, targetDirPath)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("installed %s %s\n", i.TargetBinaryFileName, filePath)
-	if err := setVersion(getVersionsPath(i.InstallDirectoryPath), getGlobalVersionFilePath(i.InstallDirectoryPath), version); err != nil {
-		return err
-	}
-	return nil
+	i.installer.SetVersion(version)
+	return i.installer.Install(ctx)
 }

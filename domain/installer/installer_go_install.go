@@ -3,7 +3,7 @@ package installer
 import (
 	"context"
 
-	"github.com/shiv3/protoenv/adapter/goinstall"
+	"github.com/shiv3/protoenv/adapter/gomodule"
 )
 
 type InstallerGoInstall struct {
@@ -15,6 +15,10 @@ func NewInstallerGoInstall(installType InstallType, installConfig InstallConfig)
 	return &InstallerGoInstall{InstallType: installType, InstallConfig: installConfig}
 }
 
-func (i *InstallerGoInstall) Install(ctx context.Context) error {
-	return goinstall.GoInstall(ctx, i.InstallConfig.TargetUrl, i.InstallConfig.TargetVersion, i.InstallConfig.TargetPath)
+func (i *InstallerGoInstall) Install(ctx context.Context, options ...InstallOption) error {
+	return gomodule.GoInstall(ctx, i.InstallConfig.TargetUrl, i.InstallConfig.TargetVersion, i.InstallConfig.TargetPath)
+}
+
+func (i *InstallerGoInstall) SetVersion(version string) {
+	i.InstallConfig.TargetVersion = version
 }
