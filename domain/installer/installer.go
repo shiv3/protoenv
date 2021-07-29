@@ -16,7 +16,12 @@ func NewInstaller(installType InstallType, installConfig InstallConfig) Installe
 	case InstallTypeGoInstall:
 		return NewInstallerGoInstall(InstallTypeGoInstall, installConfig)
 	case InstallTypeGitHubReleaseZip:
-		return NewInstallerGithubReleaseZip(InstallTypeGitHubReleaseZip, installConfig)
+		return NewInstallerGithubReleaseZip(InstallTypeGitHubReleaseZip, installConfig, map[string]string{
+			"darwin/386":   "osx-x86_64",
+			"darwin/amd64": "osx-x86_64",
+			"linux/386":    "linux-x86_32",
+			"linux/amd64":  "linux-x86_64",
+		})
 	}
 	return nil
 }

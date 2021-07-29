@@ -18,8 +18,8 @@ type InstallerGithubReleaseZip struct {
 	ArchMatcher   map[string]string
 }
 
-func NewInstallerGithubReleaseZip(installType InstallType, installConfig InstallConfig) *InstallerGithubReleaseZip {
-	return &InstallerGithubReleaseZip{InstallType: installType, InstallConfig: installConfig}
+func NewInstallerGithubReleaseZip(installType InstallType, installConfig InstallConfig, archMatcher map[string]string) *InstallerGithubReleaseZip {
+	return &InstallerGithubReleaseZip{InstallType: installType, InstallConfig: installConfig, ArchMatcher: archMatcher}
 }
 
 func (i *InstallerGithubReleaseZip) Install(ctx context.Context, options ...InstallOption) error {
