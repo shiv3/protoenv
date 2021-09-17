@@ -6,7 +6,7 @@ version manager for protocol buffer tools
 # Install
 
 ```
-go install github.com/shiv3/protoenv
+go install github.com/shiv3/protoenv@v0.0.3
 ```
 
 # Usage
